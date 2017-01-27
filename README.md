@@ -75,12 +75,12 @@ You can change the buttons that show up on this view by altering the arrays.xml 
 
 Listen for castStateChange event and once connected to application start casting
 	
-	```proxy.addEventListener('castStateChange', function(e){
+	`proxy.addEventListener('castStateChange', function(e){
 		if(e.state == 4)
 		{
 			proxy.castVideo(cast_obj);
 		} 
-	});```
+	});`
 
 The object you pass to castVideo has the following properties you can pass:
 
