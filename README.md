@@ -47,12 +47,12 @@ This module has 3 main components:
 Create the view 
 	`var media_route_button = ti_cast.createMediaRouter({lifecycleContainer: win});`
 and add it to a window in onCreateOptionsMenu
-	```win.activity.onCreateOptionsMenu = function(e){
+	`win.activity.onCreateOptionsMenu = function(e){
 		e.menu.add({
             actionView: media_route_button,
             showAsAction: Titanium.Android.SHOW_AS_ACTION_ALWAYS
         });
-	};```
+	};`
 	
 NOTE: When creating the view you will most likely need to pass in a lifecycleContainer or you will get an error.
 
@@ -61,8 +61,8 @@ Again, create the view
 	`var mini_controller = ti_cast.createMediaController({lifecycleContainer: win});`
 
 Give it a bottom of 0 so it is at the bottom of the window and add it
-	```mini_controller.bottom = 0;
-	win.add(mini_controller);```
+	`mini_controller.bottom = 0;`
+	`win.add(mini_controller);`
 
 Once you start casting this will make itself visible.
 
