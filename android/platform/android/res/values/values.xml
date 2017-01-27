@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <style name="ExpandedControllerTheme" parent="@style/Theme.AppCompat"> <!--The Light caused the castbutton to be dark colored-->
+  	<item name="castExpandedControllerStyle">
+		@style/CustomExpandedControllerStyle
+  	</item>
+  	<item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item> 
+  </style>
+  
+  <style name="CustomExpandedControllerStyle" parent="CastExpandedController">
+  	<item name="castControlButtons">
+  		@array/cast_expanded_controller_control_buttons
+  	</item>
+  </style>
+</resources>
+
