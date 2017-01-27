@@ -14,10 +14,6 @@ exports.init = function (logger, config, cli, appc) {
 
             var externalLibraries = [
                 {
-                    javaClass:'com.vervewireless.advert',
-                    resPath: path.join(libResPath, 'ti.dfp', '2.1.0', 'platform', 'android', 'library_res', 'Verve_AdSDK_3.3.0')
-                },
-                {
 
                     javaClass:'android.support.v7.mediarouter',
                     resPath: path.join(libResPath, 'com.cbcnewmedia.cast', '1.0.0', 'platform', 'android', 'library_res', 'mediarouter-v7-24.0.0')
