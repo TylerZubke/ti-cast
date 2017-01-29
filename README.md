@@ -1,4 +1,4 @@
-AST
+TI-CAST
 ===========================================
 
 This is a module that adds Chromecast support to your Titanium android app.
