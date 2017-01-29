@@ -4,24 +4,6 @@ TI-CAST
 This is a module that adds Chromecast support to your Titanium android app.
 Right now the module only supports casting video.
 
-MODULE NAMING
--------------
-
-com.cbcnewmedia.cast
-
-
-REGISTER TI-CAST MODULE
---------------------
-
-Register your module with your application by editing `tiapp.xml` and adding your module.
-Example:
-
-<modules>
-	<module version="1.0">com.cbcnewmedia.cast</module>
-</modules>
-
-
-
 USING TI-CAST
 -------------------------
 You need to perform a couple extra steps before you can use this module.
@@ -35,7 +17,7 @@ Basically, all you do is create a few directories like so: [PROJECT_ROOT]/plugin
 Thank you to Jose (https://jira.appcelerator.org/browse/TIMOB-11360?focusedCommentId=295096&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-295096) comment for a script on how to import the resources of multiple libraries.
 
 
-Now require the module Require it.
+Now require the module.
 	var ti_cast = require('com.cbcnewmedia.cast');
 
 COMPONENTS
