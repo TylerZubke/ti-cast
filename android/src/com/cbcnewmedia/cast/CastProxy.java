@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Message;
 
 import com.google.android.gms.cast.MediaInfo;
+import com.google.android.gms.cast.MediaStatus;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.CastStateListener;
@@ -33,6 +34,7 @@ public class CastProxy extends KrollProxy{
 	private CastSession castSession;
 	private MediaItem mediaItem;
 	private int castState;
+	private boolean expandedControllerLaunched;
 	
 	private static final int MSG_CAST_STATE = 10000;
 	private static final int MSG_SETUP_CTX = 20000;
@@ -197,6 +199,8 @@ public class CastProxy extends KrollProxy{
 	
 	private void handleCastVideo(MediaInfo mediaInfo, boolean autoplay, long startPosition)
 	{
+		expandedControllerLaunched = false;
+		
 		if(castSession == null) { Log.d(TAG, "Unable to cast video. CastSession is null."); return; }
 		if(!castSession.isConnected()) { Log.d(TAG, "Unable to cast video. Not connected to device."); return; }
 		
@@ -209,26 +213,39 @@ public class CastProxy extends KrollProxy{
 		remoteMediaClient.addListener(new RemoteMediaClient.Listener() {
             @Override
             public void onStatusUpdated() {
-          
-            	Intent intent = new Intent(getActivity(), ExpandedControlsActivity.class);
-        		getActivity().startActivity(intent);
-        		remoteMediaClient.removeListener(this);
+            	Log.d(TAG, "onStatusUpdated");
+            	if(!expandedControllerLaunched)
+            	{
+            		Log.d(TAG, "Launching ExpandedControlsActivity");
+            		Intent intent = new Intent(getActivity(), ExpandedControlsActivity.class);
+            		getActivity().startActivity(intent);
+            		expandedControllerLaunched = true;
+            	}
+            	else
+            	{
+            		if(remoteMediaClient.getPlayerState() == MediaStatus.PLAYER_STATE_IDLE
+            			&& remoteMediaClient.getPlayerState() == MediaStatus.IDLE_REASON_FINISHED)
+            		{
+            			fireEvent("videoEnded", null);
+            			remoteMediaClient.removeListener(this);
+            		}
+            	}
             }
 
             @Override
-            public void onMetadataUpdated() { }
+            public void onMetadataUpdated() { Log.d(TAG, "onMetadataUpdated"); }
 
             @Override
-            public void onQueueStatusUpdated() { }
+            public void onQueueStatusUpdated() { Log.d(TAG, "onQueueStatusUpdated"); }
 
             @Override
-            public void onPreloadStatusUpdated() { }
+            public void onPreloadStatusUpdated() { Log.d(TAG, "onPreloadStatusUpdated"); }
 
             @Override
-            public void onSendingRemoteMediaRequest() { }
+            public void onSendingRemoteMediaRequest() { Log.d(TAG, "onSendingRemoteMediaRequest"); }
 
 			@Override
-			public void onAdBreakStatusUpdated() { }
+			public void onAdBreakStatusUpdated() { Log.d(TAG, "onAdBreakStatusUpdated"); }
 
         });
 	}
@@ -257,10 +274,10 @@ public class CastProxy extends KrollProxy{
 		sessionManagerListener = new SessionManagerListener<CastSession>() {
 			@Override
             public void onSessionEnded(CastSession session, int error) {
-                onApplicationDisconnected();
 	            HashMap<String, Object> event = new HashMap<String, Object>();
 	            event.put("error", error);
 	            fireEvent("sessionEnded", event);
+	            onApplicationDisconnected();
             }
 
             @Override
