@@ -89,19 +89,25 @@ The castProxy also has a few other methods exposed:
 docs: https://developers.google.com/android/reference/com/google/android/gms/cast/framework/CastState
 
 return values:
-1 = NO_DEVICES_AVAILABLE
-2 = NOT_CONNECTED
-3 = CONNECTING
-4 = CONNECTED
+
+| Value         | Reason        |
+| ------------- |:-------------:|
+| 1      | NO_DEVICES_AVAILABLE |
+| 2      | NOT_CONNECTED        |
+| 3      | CONNECTING           |
+| 4 .    | CONNECTED            |
 
 `int getSessionState()`
 
 docs: https://developers.google.com/android/reference/com/google/android/gms/cast/framework/media/RemoteMediaClient#getPlayerState()
 
-0 = PLAYER_STATE_UNKNOWN
-1 = PLAYER_STATE_IDLE
-2 = PLAYER_STATE_PLAYING
-3 = PLAYER_STATE_PAUSED
+
+| Value         | Reason        |
+| ------------- |:-------------:|
+| 0      | PLAYER_STATE_UNKNOWN |
+| 1      | PLAYER_STATE_IDLE    |
+| 2      | PLAYER_STATE_PLAYING |
+| 3 .    | PLAYER_STATE_PAUSED  |
 
 You can also listen for the `sessionEnded` event
 
