@@ -35,19 +35,18 @@ public class CastProxy extends KrollProxy{
 	private MediaItem mediaItem;
 	private int castState;
 	private boolean expandedControllerLaunched;
-	private boolean playStatusFound;
-
+	
 	private static final int MSG_CAST_STATE = 10000;
 	private static final int MSG_SETUP_CTX = 20000;
 	private static final int MSG_START_CAST = 30000;
 	private static final int MSG_SESSION_STATE = 40000;
-
+	
 	public CastProxy() {
 		super();
 		Log.d(TAG, "In constructor");
 		setupCastContext();
 	}
-
+	
 	@Override
 	public boolean handleMessage(final Message msg){
 		switch (msg.what) {
@@ -69,26 +68,26 @@ public class CastProxy extends KrollProxy{
         	handleCastVideo(mediaInfo, autoplay, startPosition);
         	((AsyncResult) msg.obj).setResult(null);
     		return true;
-
+    		
         }
         case MSG_SESSION_STATE: {
         	int state = -1;
-        	if(castSession != null) {
+        	if(castSession != null) { 
         		RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
         		if(remoteMediaClient != null) {
         			state = remoteMediaClient.getPlayerState();
         		}
         	}
-
+			
             ((AsyncResult) msg.obj).setResult(state);
             return true;
         }
 		 	default:
 	            return super.handleMessage(msg);
 		}
-
+		
 	}
-
+	
 	private void setupCastContext()
 	{
 		if(!TiApplication.isUIThread()) {
@@ -97,7 +96,7 @@ public class CastProxy extends KrollProxy{
 			handleSetupCastContext();
 		}
 	}
-
+	
 	private void handleSetupCastContext()
 	{
 		Activity activity = TiApplication.getAppRootOrCurrentActivity();
@@ -106,9 +105,9 @@ public class CastProxy extends KrollProxy{
 		castSession = castContext.getSessionManager().getCurrentCastSession();
 		setupCastStateListener();
 		setupSessionListener();
-
+		
 	}
-
+	
 	@Kroll.method
 	public int getCastState()
 	{
@@ -124,7 +123,7 @@ public class CastProxy extends KrollProxy{
 			return castState;
 		}
 	}
-
+	
 	@Kroll.method
 	public int getSessionState()
 	{
@@ -143,34 +142,34 @@ public class CastProxy extends KrollProxy{
 			return remoteMediaClient.getPlayerState();
 		}
 	}
-
-
+	
+	
 	@Kroll.method
 	public void castVideo(HashMap args){
-
+		
 		KrollDict dict = new KrollDict(args);
-
+		
 		MediaItem media = new MediaItem();
-
+		
 		String url = dict.optString("url", null);
 		String contentType = dict.optString("contentType", "videos/mp4");
 		int duration = dict.optInt("duration", -1);
 		boolean autoplay = dict.optBoolean("autoplay", true);
 		int startPosition = dict.optInt("startPosition", 0);
-
+		
 		media.setUrl(url);
 		media.setContentType(contentType);
 		media.setDuration(duration);
-
+		
 		KrollDict metadata = dict.getKrollDict("metadata");
-
+		
 		if(metadata.containsKey("images"))
 		{
 			Object[] images = (Object[])metadata.get("images");
 			ArrayList<String> imageList = new ArrayList<String>();
 			for(Object image : images){
 				imageList.add((String)image);
-			}
+			}	
 			media.setImageList(imageList);
 		}
 		if(metadata.containsKey("title"))
@@ -183,39 +182,38 @@ public class CastProxy extends KrollProxy{
 			String subtitle = metadata.optString("subtitle", null);
 			media.setSubTitle(subtitle);
 		}
-
+		
 		MediaInfo mediaInfo = media.buildMediaInfo();
-
+		
 		KrollDict data = new KrollDict();
 		data.put("info", mediaInfo);
 		data.put("autoplay", autoplay);
 		data.put("startPosition", startPosition);
-
+		
 		if(!TiApplication.isUIThread()) {
 			TiMessenger.sendBlockingMainMessage(getMainHandler().obtainMessage(MSG_START_CAST), data);
 		} else {
 			handleCastVideo(mediaInfo, autoplay, startPosition);
 		}
 	}
-
+	
 	private void handleCastVideo(MediaInfo mediaInfo, boolean autoplay, long startPosition)
 	{
 		expandedControllerLaunched = false;
-		playStatusFound = false;
-
+		
 		if(castSession == null) { Log.d(TAG, "Unable to cast video. CastSession is null."); return; }
 		if(!castSession.isConnected()) { Log.d(TAG, "Unable to cast video. Not connected to device."); return; }
-
+		
 		final RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
 		if(remoteMediaClient == null) { Log.d(TAG, "Unable to cast video. RemoteMediaClient is null."); return; }
-
+		
 		Log.d(TAG, "Starting cast with values { start position: " + startPosition + ", autoplay: " + autoplay + " }");
 		remoteMediaClient.load(mediaInfo, autoplay, startPosition);
-
+		
 		remoteMediaClient.addListener(new RemoteMediaClient.Listener() {
             @Override
             public void onStatusUpdated() {
-            	Log.d(TAG, "onStatusUpdated: " + remoteMediaClient.getPlayerState());
+            	Log.d(TAG, "onStatusUpdated");
             	if(!expandedControllerLaunched)
             	{
             		Log.d(TAG, "Launching ExpandedControlsActivity");
@@ -223,15 +221,10 @@ public class CastProxy extends KrollProxy{
             		getActivity().startActivity(intent);
             		expandedControllerLaunched = true;
             	}
-            	else if(remoteMediaClient.getPlayerState() == MediaStatus.PLAYER_STATE_PLAYING)
-            	{
-            		playStatusFound = true;
-            	}
             	else
             	{
-            		if(playStatusFound
-            		&& remoteMediaClient.getPlayerState() == MediaStatus.PLAYER_STATE_IDLE
-            		&& remoteMediaClient.getPlayerState() == MediaStatus.IDLE_REASON_FINISHED)
+            		if(remoteMediaClient.getPlayerState() == MediaStatus.PLAYER_STATE_IDLE
+            			&& remoteMediaClient.getPlayerState() == MediaStatus.IDLE_REASON_FINISHED)
             		{
             			fireEvent("videoEnded", null);
             			remoteMediaClient.removeListener(this);
