@@ -6,16 +6,9 @@ Right now the module only supports casting video.
 
 USING TI-CAST
 -------------------------
-You need to perform a couple extra steps before you can use this module.
 
 1. Open the strings.xml file within the module (path should be something like [PROJECT_ROOT]/modules/android/com.cbcnewmedia.cast/1.0.0/platform/android/res/values/strings.xml)
 I wish this could be provided when instantiating the module in the javascript, but the class that uses this value is provided through a meta-data tag in the timodule.xml.
-
-2. Create a hook to import the necessary resources since you can't add a library to a titanium project like you can a regular android project. Instructions on setting this up can be found at http://docs.appcelerator.com/platform/latest/#!/guide/Titanium_CLI_Plugins-section-src-37549163_TitaniumCLIPlugins-Plugins.
-Basically, all you do is create a few directories like so: [PROJECT_ROOT]/plugins/[PLUGIN_NAME]/[PLUGIN_VERSION]/hooks/. Then within the hooks directory place the import_res.js file (found in the example folder of this module)
-
-Thank you to Jose (https://jira.appcelerator.org/browse/TIMOB-11360?focusedCommentId=295096&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-295096) comment for a script on how to import the resources of multiple libraries.
-
 
 Now require the module.
 	var ti_cast = require('com.cbcnewmedia.cast');
@@ -89,25 +82,19 @@ The castProxy also has a few other methods exposed:
 docs: https://developers.google.com/android/reference/com/google/android/gms/cast/framework/CastState
 
 return values:
-
-| Value         | Reason        |
-| ------------- |:-------------:|
-| 1      | NO_DEVICES_AVAILABLE |
-| 2      | NOT_CONNECTED        |
-| 3      | CONNECTING           |
-| 4 .    | CONNECTED            |
+1 = NO_DEVICES_AVAILABLE
+2 = NOT_CONNECTED
+3 = CONNECTING
+4 = CONNECTED
 
 `int getSessionState()`
 
 docs: https://developers.google.com/android/reference/com/google/android/gms/cast/framework/media/RemoteMediaClient#getPlayerState()
 
-
-| Value         | Reason        |
-| ------------- |:-------------:|
-| 0      | PLAYER_STATE_UNKNOWN |
-| 1      | PLAYER_STATE_IDLE    |
-| 2      | PLAYER_STATE_PLAYING |
-| 3 .    | PLAYER_STATE_PAUSED  |
+0 = PLAYER_STATE_UNKNOWN
+1 = PLAYER_STATE_IDLE
+2 = PLAYER_STATE_PLAYING
+3 = PLAYER_STATE_PAUSED
 
 You can also listen for the `sessionEnded` event
 
